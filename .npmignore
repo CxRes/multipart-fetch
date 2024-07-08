@@ -1,0 +1,50 @@
+# Temporary Files
+_*
+
+# Configuration Files
+.*
+*.config.*
+
+# Lock Files
+*lock.*
+*.lock
+
+# Test Files
+[tT]est/
+*.[tT]est.*
+
+# Logs
+logs
+*.log*
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# dotenv environment variables file
+.env
+.env.test
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# Scripts
+[sS]cripts/
+
+# Test Coverage
+[cC]overage/
+
+# TODO
+TODO
+todo
+
+# Docs
+[dD]ocs/
+
+# License
+DCO

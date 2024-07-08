@@ -1,0 +1,15 @@
+# Additional Files to Ignore
+# Prettier already ignores patterns in .gitignore
+
+# Dot Files
+.*
+
+# Lock File
+pnpm-lock.yaml
+
+# License Files
+LICENSE
+DCO
+
+# Test Samples
+/test/sample/**

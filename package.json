@@ -1,0 +1,76 @@
+{
+  "name": "multipart-fetch",
+  "version": "0.1.0",
+  "description": "Separate the parts of a multipart stream",
+  "keywords": [
+    "client",
+    "fetch",
+    "response",
+    "multipart",
+    "parse",
+    "parser",
+    "stream"
+  ],
+  "author": "Rahul Gupta",
+  "license": "MPL-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CxRes/multipart-fetch.git"
+  },
+  "type": "module",
+  "main": "src/index.js",
+  "exports": "./src/index.js",
+  "browser": "dist/browser.min.js",
+  "unpkg": "dist/browser.min.js",
+  "dependencies": {
+    "@sec-ant/readable-stream": "^0.4.1",
+    "content-type": "^1.0.5",
+    "streamsearch-web": "^1.0.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.3.0",
+    "@commitlint/config-conventional": "^19.2.2",
+    "@eslint/compat": "^1.1.0",
+    "@eslint/js": "^9.6.0",
+    "@vitest/coverage-v8": "^1.6.0",
+    "@vitest/ui": "^1.6.0",
+    "cspell": "^8.9.1",
+    "dedent": "^1.5.3",
+    "esbuild": "0.21.5",
+    "eslint": "^9.5.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-markdown": "^5.0.0",
+    "eslint-plugin-no-only-tests": "^3.1.0",
+    "eslint-plugin-regexp": "^2.6.0",
+    "eslint-plugin-vitest": "^0.5.4",
+    "globals": "^15.4.0",
+    "headright": "^0.1.1",
+    "husky": "^9.0.11",
+    "knip": "^5.23.2",
+    "lint-staged": "^15.2.7",
+    "parse-gitignore": "^2.0.0",
+    "prettier": "^3.3.1",
+    "vitest": "^1.6.0"
+  },
+  "engines": {
+    "node": ">20.6"
+  },
+  "scripts": {
+    "build": "node scripts/build.js",
+    "format": "prettier * --check",
+    "header": "hr --dry --verbose \"**\"",
+    "header:modify": "hr --verbose \"**\"",
+    "lint": "pnpm run --reporter=append-only --aggregate-output \"/(^lint:.*|format)/\"",
+    "lint:code": "eslint .",
+    "lint:header": "hr --dry \"**\"",
+    "lint:knip": "knip",
+    "lint:packages": "pnpm dedupe --check",
+    "lint:spelling": "cspell --dot \"**\"",
+    "prepare": "node .husky/install.js",
+    "prepublishOnly": "pnpm run lint && pnpm run test && pnpm run build",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui"
+  }
+}

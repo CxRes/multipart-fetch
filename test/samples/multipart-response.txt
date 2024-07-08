@@ -1,0 +1,19 @@
+PREAMBLE
+--boundary
+
+Method: PATCH
+Date: Sat, 08 Jun 2024 00:11:22 GMT
+
+
+--boundary
+Content-type: message/rfc822
+Content-language: en
+
+Method: DELETE
+Date: Sat, 08 Jun 2024 00:22:33 GMT
+
+
+--boundary
+
+--boundary--
+EPILOGUE

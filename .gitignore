@@ -1,0 +1,40 @@
+# Temporary Objects
+_*
+
+# Builds
+dist/
+
+# Logs
+logs
+*.log
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Dependency directories
+node_modules/
+
+# Optional eslint cache
+.eslintcache
+
+# dotenv environment variables file
+.env
+.env.test
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# Test Coverage
+coverage/
+
+# TODO
+TODO
+
+# References
+# https://github.com/github/gitignore/blob/master/Node.gitignore

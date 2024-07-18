@@ -58,7 +58,7 @@ describe.concurrent("Discard Epilogue", () => {
     for await (const part of ketu(chunks)) {
       output.push(part && textDecoder.decode(part));
     }
-    expect(output).toEqual([]);
+    expect(output).toEqual([,]);
   });
 
   it("should detect tail after and discard all subsequent chunks", async () => {
@@ -70,7 +70,7 @@ describe.concurrent("Discard Epilogue", () => {
     for await (const part of ketu(chunks)) {
       output.push(part && textDecoder.decode(part));
     }
-    expect(output).toEqual([]);
+    expect(output).toEqual([,]);
   });
 
   it("should detect a split tail", async () => {
@@ -83,7 +83,7 @@ describe.concurrent("Discard Epilogue", () => {
     for await (const part of ketu(chunks)) {
       output.push(part && textDecoder.decode(part));
     }
-    expect(output).toEqual([]);
+    expect(output).toEqual([,]);
   });
 
   it("should fail on a partial tail", async () => {

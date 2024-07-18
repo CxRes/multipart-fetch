@@ -49,6 +49,18 @@ describe.concurrent("Discard Epilogue", () => {
     ]);
   });
 
+  it("should handle just tail", async () => {
+    const chunks = chunksGenerator([
+      ,
+      "--", //
+    ]);
+    const output = [];
+    for await (const part of ketu(chunks)) {
+      output.push(part && textDecoder.decode(part));
+    }
+    expect(output).toEqual([]);
+  });
+
   it("should detect tail after and discard all subsequent chunks", async () => {
     const chunks = chunksGenerator([
       ,

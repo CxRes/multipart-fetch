@@ -18,7 +18,6 @@ async function* ketu(chunks) {
           if (chunk[0] === 0x2d) {
             remainingTail = 1;
           } else {
-            yield;
             yield chunk;
             remainingTail = undefined;
           }
@@ -27,7 +26,6 @@ async function* ketu(chunks) {
             foundTail = true;
             remainingTail = 0;
           } else {
-            yield;
             yield chunk;
             remainingTail = undefined;
           }
@@ -38,7 +36,6 @@ async function* ketu(chunks) {
           foundTail = true;
           remainingTail = 0;
         } else {
-          yield undefined;
           yield new Uint8Array([0x2d]);
           yield chunk;
           remainingTail = undefined;
@@ -49,9 +46,8 @@ async function* ketu(chunks) {
       default:
         if (!chunk) {
           remainingTail = 2;
-        } else {
-          yield chunk;
         }
+        yield chunk;
     }
     ({ value: chunk, done } = await chunks.next(foundTail));
   }

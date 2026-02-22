@@ -1,5 +1,5 @@
 /*!
- *  Copyright (c) 2024, Timothy Wong and Multipart Fetch contributors.
+ *  Copyright (c) 2026, Timothy Wong and Multipart Fetch contributors.
  *
  *  This Source Code Form is subject to the terms of the Mozilla Public
  *  License, v. 2.0. If a copy of the MPL was not distributed with this

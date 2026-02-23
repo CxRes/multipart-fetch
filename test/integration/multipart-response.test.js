@@ -8,7 +8,7 @@
  *  SPDX-License-Identifier: MPL-2.0
  */
 import { describe, it, expect } from "vitest";
-import fs from "node:fs";
+import { readFileSync } from "node:fs";
 import dedent from "dedent";
 
 import MultipartResponse from "~/multipart-response.js";
@@ -34,8 +34,18 @@ describe("Multipart Response", () => {
   });
 
   describe("with Simple Multipart Message", () => {
-    const file = fs.createReadStream("./test/samples/multipart-response.txt");
-    const response = new Response(ReadableStream.from(file), {
+    const file = readFileSync("./test/samples/multipart-response.txt", "utf8");
+    const chunks = file.split("\r\n--boundary\r\n");
+    let chunkCount = 0;
+
+    const { readable, writable } = new TransformStream();
+    const writer = writable.getWriter();
+    const te = new TextEncoder();
+    function write(str) {
+      writer.write(te.encode(`${str}\r\n--boundary\r\n`));
+    }
+
+    const response = new Response(readable, {
       headers: [["Content-Type", 'multipart/digest; boundary="boundary"']],
     });
     const multipartResponse = MultipartResponse(response);
@@ -44,6 +54,8 @@ describe("Multipart Response", () => {
     let part;
 
     it('should auto generate "Content-Type" header in the first part based on the "digest" subtype', async () => {
+      write(chunks[chunkCount++]); // Preamble
+      write(chunks[chunkCount++]); // First Part
       ({ value: part } = await parts.next());
       expect(part.headers.get("content-type").toString()).toBe(
         "message/rfc822",
@@ -60,6 +72,7 @@ describe("Multipart Response", () => {
     });
 
     it("should output headers in the second part", async () => {
+      write(chunks[chunkCount++]); // Second Part
       ({ value: part } = await parts.next());
       expect(part.headers.get("content-type")).toBe("message/rfc822");
       expect(part.headers.get("content-language")).toBe("en");
@@ -75,6 +88,7 @@ describe("Multipart Response", () => {
     });
 
     it("should output an empty multipart", async () => {
+      write(chunks[chunkCount++]); // Final Boundary + Epilogue
       ({ value: part } = await parts.next());
       expect(part.headers.get("content-type")).toBe("message/rfc822");
     });

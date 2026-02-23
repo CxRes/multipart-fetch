@@ -37,6 +37,7 @@ export default {
     "roff",
     "signoff",
     "dedupe",
+    "esbuild",
   ],
   ignoreRegExpList: [/(Dependencies|dependencies|scripts)": \{.*?\}/gs],
 };

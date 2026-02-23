@@ -11,8 +11,8 @@ import js from "@eslint/js";
 import { includeIgnoreFile } from "@eslint/compat";
 import globals from "globals";
 import prettier from "eslint-config-prettier";
-import vitest from "eslint-plugin-vitest";
-import markdown from "eslint-plugin-markdown";
+import vitest from "@vitest/eslint-plugin";
+import markdown from "@eslint/markdown";
 import * as regexpPlugin from "eslint-plugin-regexp";
 import noOnlyTests from "eslint-plugin-no-only-tests";
 
@@ -44,9 +44,15 @@ export default [
       },
     },
   },
-  js.configs.recommended,
+  {
+    ...js.configs.recommended,
+    files: ["**/*.js"],
+  },
   prettier,
-  regexpPlugin.configs["flat/recommended"],
+  {
+    files: ["**/*.js"],
+    ...regexpPlugin.configs["flat/recommended"],
+  },
   {
     files: ["**/*.test.js"],
     languageOptions: {
@@ -64,5 +70,11 @@ export default [
       "noOnlyTests/no-only-tests": ["error", { fix: true }],
     },
   },
-  ...markdown.configs.recommended,
+  {
+    files: ["**/*.md"],
+    plugins: {
+      markdown,
+    },
+    language: "markdown/gfm",
+  },
 ];

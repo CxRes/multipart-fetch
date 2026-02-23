@@ -105,6 +105,6 @@ On Deno, you can link to the bundle directly from source, just like in the brows
 
 ## Copyright and License
 
-Copyright © 2024, [Rahul Gupta](https://cxres.pages.dev/profile#i) and Multipart Fetch contributors.
+Copyright © 2026, [Rahul Gupta](https://cxres.pages.dev/profile#i) and Multipart Fetch contributors.
 
 The source code in this repository is released under the [Mozilla Public License v2.0](./LICENSE).

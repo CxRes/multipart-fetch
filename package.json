@@ -1,6 +1,6 @@
 {
   "name": "multipart-fetch",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Separate the parts of a multipart stream",
   "keywords": [
     "client",
@@ -22,6 +22,7 @@
   "exports": "./src/index.js",
   "browser": "dist/browser.min.js",
   "unpkg": "dist/browser.min.js",
+  "types": "src/index.d.ts",
   "dependencies": {
     "@sec-ant/readable-stream": "^0.4.1",
     "content-type": "^1.0.5",

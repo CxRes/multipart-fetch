@@ -19,25 +19,29 @@ async function* detectBoundary(chunks, boundary) {
   let done, foundTail;
   let chunk = crlf;
 
-  while (!done) {
-    if (!foundTail) {
-      const splits = splitter.push(chunk);
-      for (const split of splits) {
-        if (split.hasNonMatchData) {
-          const { isSafe, data, begin, end } = split;
-          if (end > begin) {
-            foundTail = yield isSafe ?
-              data.subarray(begin, end)
-            : data.slice(begin, end);
+  try {
+    while (!done) {
+      if (!foundTail) {
+        const splits = splitter.push(chunk);
+        for (const split of splits) {
+          if (split.hasNonMatchData) {
+            const { isSafe, data, begin, end } = split;
+            if (end > begin) {
+              foundTail = yield isSafe ?
+                data.subarray(begin, end)
+              : data.slice(begin, end);
+            }
+          }
+
+          if (split.isMatch) {
+            foundTail = yield;
           }
         }
-
-        if (split.isMatch) {
-          foundTail = yield;
-        }
       }
+      ({ value: chunk, done } = await chunks.next());
     }
-    ({ value: chunk, done } = await chunks.next());
+  } finally {
+    await chunks.return?.();
   }
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "multipart-fetch",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Separate the parts of a multipart stream",
   "keywords": [
     "client",

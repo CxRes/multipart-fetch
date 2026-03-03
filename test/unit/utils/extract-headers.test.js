@@ -140,8 +140,9 @@ describe("Extract Headers", () => {
     expect(await extractHeaders(generateChunks(input))).toEqual(expected);
   });
 
-  it.skip("should handle buffer overflow by returning the current buffer and the remainder of the chunk", async () => {
-    const input = new Uint8Array([...new Array(1024 ** 2)].map(() => 0x20)); // Simulate large data buffer
+  it("should handle buffer overflow by returning the current buffer and the remainder of the chunk", async () => {
+    const maxByteLength = 1024 ** 2;
+    const input = new Uint8Array(maxByteLength); // Simulate large data buffer
     const excess = new Uint8Array([0x20, 0x20]);
     const mockStream = {
       next: vi
@@ -151,9 +152,10 @@ describe("Extract Headers", () => {
         .mockResolvedValueOnce({ done: true }),
     };
 
-    expect(await extractHeaders(mockStream)).toBe({
-      remainder: excess,
-      buffer: input,
-    });
+    const result = await extractHeaders(mockStream);
+
+    // Verify the result structure
+    expect(result.buffer.length).toBe(maxByteLength);
+    expect(result.remainder).toEqual(excess);
   });
 });

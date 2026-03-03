@@ -8,13 +8,17 @@
  *  SPDX-License-Identifier: MPL-2.0
  */
 async function* rahu(chunks) {
-  let { value, done } = await chunks.next();
-  while (!done) {
-    if (!value) {
-      yield* chunks;
-      return;
+  try {
+    let { value, done } = await chunks.next();
+    while (!done) {
+      if (!value) {
+        yield* chunks;
+        return;
+      }
+      ({ value, done } = await chunks.next());
     }
-    ({ value, done } = await chunks.next());
+  } finally {
+    await chunks.return?.();
   }
 }
 

@@ -9,40 +9,44 @@
  */
 async function* removeTransportPadding(chunks) {
   let remaining = 2;
-  let { value: chunk, done } = await chunks.next();
+  try {
+    let { value: chunk, done } = await chunks.next();
 
-  while (!done) {
-    switch (remaining) {
-      case 2:
-        if (chunk.length === 1) {
-          if (chunk[0] === 0x0d) {
-            remaining = 1;
+    while (!done) {
+      switch (remaining) {
+        case 2:
+          if (chunk.length === 1) {
+            if (chunk[0] === 0x0d) {
+              remaining = 1;
+            } else {
+              yield chunk;
+              remaining = 0;
+            }
           } else {
-            yield chunk;
-            remaining = 0;
+            if (chunk[0] === 0x0d && chunk[1] === 0x0a) {
+              yield chunk.subarray(2);
+              remaining = 0;
+            } else {
+              yield chunk;
+            }
           }
-        } else {
-          if (chunk[0] === 0x0d && chunk[1] === 0x0a) {
-            yield chunk.subarray(2);
+          break;
+        case 1:
+          if (chunk[0] === 0x0a) {
+            yield chunk.subarray(1);
             remaining = 0;
           } else {
+            yield new Uint8Array([0x0d]);
             yield chunk;
           }
-        }
-        break;
-      case 1:
-        if (chunk[0] === 0x0a) {
-          yield chunk.subarray(1);
-          remaining = 0;
-        } else {
-          yield new Uint8Array([0x0d]);
+          break;
+        case 0:
           yield chunk;
-        }
-        break;
-      case 0:
-        yield chunk;
+      }
+      ({ value: chunk, done } = await chunks.next());
     }
-    ({ value: chunk, done } = await chunks.next());
+  } finally {
+    await chunks.return?.();
   }
 }
 

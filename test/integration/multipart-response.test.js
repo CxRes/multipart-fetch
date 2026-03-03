@@ -7,13 +7,18 @@
  *
  *  SPDX-License-Identifier: MPL-2.0
  */
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import dedent from "dedent";
 
 import MultipartResponse from "~/multipart-response.js";
 
 describe("Multipart Response", () => {
+  const file = readFileSync("./test/samples/multipart-response.txt", "utf8");
+  const chunks = file.split("\r\n--boundary\r\n");
+
+  const headers = [["Content-Type", 'multipart/digest; boundary="boundary"']];
+
   describe.concurrent("should fail", () => {
     it("when no stream is provided", () => {
       expect(() => MultipartResponse()).toThrowError(/No .* provided/);
@@ -34,15 +39,13 @@ describe("Multipart Response", () => {
   });
 
   describe("with Simple Multipart Message", () => {
-    const file = readFileSync("./test/samples/multipart-response.txt", "utf8");
-    const chunks = file.split("\r\n--boundary\r\n");
     let chunkCount = 0;
 
     const { readable, writable } = new TransformStream();
     const writer = writable.getWriter();
-    const te = new TextEncoder();
+    const encoder = new TextEncoder();
     function write(str) {
-      writer.write(te.encode(`${str}\r\n--boundary\r\n`));
+      writer.write(encoder.encode(`${str}\r\n--boundary\r\n`));
     }
 
     const response = new Response(readable, {
@@ -91,6 +94,72 @@ describe("Multipart Response", () => {
       write(chunks[chunkCount++]); // Final Boundary + Epilogue
       ({ value: part } = await parts.next());
       expect(part.headers.get("content-type")).toBe("message/rfc822");
+    });
+  });
+
+  describe("Early Termination", () => {
+    const encoder = new TextEncoder();
+    async function* generateChunks() {
+      for (const chunk of chunks) {
+        yield encoder.encode(`${chunk}\r\n--boundary\r\n`);
+      }
+    }
+
+    it("should call return() on the upstream iterator when consumer breaks early", async () => {
+      const returnSpy = vi.fn();
+
+      // Create an async iterator with a spy on return()
+      async function* iteratorWithSpy() {
+        try {
+          yield* generateChunks();
+        } finally {
+          returnSpy();
+        }
+      }
+
+      const response = new Response(iteratorWithSpy(), { headers });
+      const multipartResponse = MultipartResponse(response);
+
+      for await (const part of multipartResponse) {
+        await part.text(); // Consume the first part
+        break; // Stop iteration
+      }
+
+      // Allow microtasks to settle
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(returnSpy).toHaveBeenCalled();
+    });
+
+    it("should call return() on the upstream iterator when error occurs during iteration", async () => {
+      const returnSpy = vi.fn();
+
+      // Create an async iterator with a spy on return()
+      async function* iteratorWithSpy() {
+        try {
+          yield* generateChunks();
+        } finally {
+          returnSpy();
+        }
+      }
+
+      const response = new Response(iteratorWithSpy(), {
+        headers,
+      });
+
+      const multipartResponse = MultipartResponse(response);
+
+      await expect(async () => {
+        for await (const part of multipartResponse) {
+          await part.text();
+          throw new Error("Consumer error");
+        }
+      }).rejects.toThrow("Consumer error");
+
+      // Allow microtasks to settle
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(returnSpy).toHaveBeenCalled();
     });
   });
 });
